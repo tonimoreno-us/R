@@ -4,7 +4,9 @@
 /* CopyPath modificado para obtener TODOS los nombres y URLs de los Dptos. */
 //*[@id="block-views-block-departamentos-block-1"]/div/div/div/div[2]/div
 
-
+/* Recordar que para obtener información habría que indicar con [] el número del nodo del fragmento de DOM (seleccionado por XPath) a procesar
+  Y que para verlo en el navegador hay que utilizar la función: $x('XPath expression')   */
+    
 
 
 
