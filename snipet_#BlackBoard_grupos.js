@@ -1,7 +1,14 @@
 /* Este snipet se utiliza para cargar de forma automática los miembros de un grupo en BlackBoard */
+/* IMPORTANTE : Este snipet solo funciona con los UVUS separados por espacios o saltos de linea.
+  Se ejecuta en la pantalla flotante que sale cuando se pulsa en Crear Grupo >> AFILIACIÓN >> Botón: Añadir Usuarios  */
+
 ada = prompt("Pegue valores grupo:");
-ada = ada.split(" ");
-// Separa los valores introducidos por espacios y los vuelve a guardar en la variable 'ada'
+if(ada.includes("\n")){ 
+  ada = ada.split("\n");
+}else{
+  ada = ada.split(" "); 
+}
+// Separa los valores introducidos por espacios o saltos de linea y los vuelve a guardar en la variable 'ada'
 ix = 0;
 
 function checkName(name){
