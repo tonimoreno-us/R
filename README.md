@@ -37,7 +37,7 @@ Los usuarios lo pueden extender definiendo sus propias funciones, aparte de las 
 Las funciones en R se pueden manipular igual que los vectores. Además puedes asignar las funciones a variables, almacenarlas en listas, devolverlas como resultados de otras funciones o incluso pasarlas como argumentos de otras funciones
 
 ## Orientado a Objetos:
-¡Sí! Además de ser funcional, es orientado a objetos, en realidad es una mezcla de ambos paradigmas. En el caso de del segundo de ellos, R nos permite modelar conceptos del mundo real relevantes a nuestro problema, representándolos como clases y objetos que podemos hacer que interactúen entre sí.
+¡Sí! Además de ser **funcional**, es **orientado a objetos**, en realidad es una mezcla de ambos paradigmas. En el caso del segundo de ellos, R nos permite modelar conceptos del mundo real relevantes a nuestro problema, representándolos como clases y objetos que podemos hacer que interactúen entre sí.
 
 ## Integrable:
 Ofrece múltiples posibilidades para atacar a datos almacenados en distintos tipos de bases de datos. También presenta múltiples bindings y paquetes que permiten a R interactuar con otros lenguajes (como Perl, Ruby o Python) e intercambiar objetos con ellos.
