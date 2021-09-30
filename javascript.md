@@ -14,7 +14,7 @@ const p = "El Sevilla F.C. es el mejor equipo de la ciudad";
 p.replace("Sevilla F.C.","Real Betis Balompié");  
   
 ## trim  
-Remove whitespace from both sides of a string  
+/* Remove whitespace from both sides of a string */  
 let str = "       Hello World!        ";  
 str.trim()   // Returns "Hello World!"  
   
