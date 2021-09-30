@@ -7,6 +7,10 @@ https://www.us.es/centros/departamentos
 Guías de atajos para distintos paquetes muy populares  
 https://www.rstudio.com/resources/cheatsheets/  
   
+Guía con los paquetes de R más importantes en el ámbito de las Web Technologies  
+https://cran.rstudio.com/web/views/WebTechnologies.html  
+  
+  
   
 # Links - Sesión 3  
   
@@ -35,3 +39,13 @@ Web scraping, web crawling, and any other form of web data extraction can be com
   
   
   
+# Funciones de R importantes de forma general :  
+The functions within the family are: apply(), sapply(), lapply(), mapply(), rapply(), tapply(), vapply()  
+
+Related functions are sweep(), by() and aggregate() and are occasionally used in conjunction with the elements of the apply() family  
+
+Given a matrix M, the call apply(M,1,fun) or apply(M, 2,fun) will apply the specified function fun to the rows of M, if 1 is specified; or to the columns of M, when 2, is specified. This numeric argument is called “margin” and it is limited to the values 1 and 2 because the function operates on a matrix. However, you could have an array with up to 8 dimensions instead.  
+
+rowSums(), colSums(), rowMeans(), and colMeans()  
+
+https://www.datacamp.com/community/tutorials/tutorial-on-loops-in-r  
