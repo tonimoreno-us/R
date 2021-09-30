@@ -4,10 +4,13 @@ https://www.us.es/centros/departamentos
   
   
 # Links - Sesión 2  
-
+Guías de atajos para distintos paquetes muy populares  
+https://www.rstudio.com/resources/cheatsheets/  
+  
+  
 # Links - Sesión 3  
-
-
+  
+  
 
 
 # Otros Links  
