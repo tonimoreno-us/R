@@ -1,0 +1,481 @@
+#### Converting a String to a Variable Name On-The-Fly and Vice-versa in R ####
+# string to R variable name
+x <- 42   # la situacion mas interesante es cuando el nombre de la variable se entrega como una string en 'x'
+eval(parse(text = "x"))
+[1] 42
+# R variable name to string
+deparse(substitute(x))
+[1] "x"
+# otra opcion es get()
+
+#### CREATE DATA ####
+data <- read.table(header=TRUE, text='
+ subject sex condition before after change
+       1   F   placebo   10.1   6.9   -3.2
+       2   F   placebo    6.3   4.2   -2.1
+       3   M   aspirin   12.4   6.3   -6.1
+       4   F   placebo    8.1   6.1   -2.0
+       5   M   aspirin   15.2   9.9   -5.3
+       6   F   aspirin   10.9   7.0   -3.9
+ ')
+
+######
+﻿d[FALSE, ]    ## Pasa la estructura (columnas)  del DF 'd' sin registros
+
+
+
+#####
+n_top     tail(sort(x),n)
+
+#### DPLYR
+plyr::summarise (grouped, mean= mean (value), sd= sd (value))
+
+# para que funcione %>% debe estar cargado el paquete
+library(dplyr)
+dplyr::summarize()
+
+## medias por grupos
+diamonds %>%
+    group_by(cut) %>%
+    dplyr::summarize(Mean = mean(price, na.rm=TRUE))
+
+#### dplyr ####
+source: https://blog.exploratory.io/filter-data-with-dplyr-76cf5f1a258e
+dataframe %>% select(columns_names) %>% filter(condition to filter rows) %>% count(column) ... otras funciones
+
+library(dplyr)
+grouped <- group_by(melted, sex, treatment)
+summarise(grouped, mean=mean(value), sd=sd(value))
+
+source: https://www.r-bloggers.com/using-r-quickly-calculating-summary-statistics-with-dplyr/
+summarise(group_by(melted, sex, treatment, variable),
+          mean=mean(value), sd=sd(value))
+ 
+melted %.% group_by(sex, treatment, variable) %.%
+       summarise(mean=mean(value), sd=sd(value))
+
+source: http://www.cookbook-r.com/Manipulating_data/Summarizing_data/
+library(plyr)
+cdata <- ddply(data, c("sex", "condition"), summarise,
+               N    = length(change),    #  sum(!is.na(change))
+               mean = mean(change, na.rm=TRUE),
+               sd   = sd(change, na.rm=TRUE),
+               se   = sd / sqrt(N)
+)
+
+# Rename the "mean" column    
+    datac <- rename(datac, c("mean" = measurevar))
+
+# Remove some all Male+Placebo entries from the data
+dataSub <- subset(data, !(sex=="M" & condition=="placebo"))
+
+library(doBy)
+
+# Run the functions length, mean, and sd on the value of "change" for each group, broken down by sex + condition
+cdata <- summaryBy(change ~ sex + condition, data=data, FUN=c(length,mean,sd), na.rm=TRUE)
+cdata
+#>   sex condition change.length change.mean change.sd
+#> 1   F   aspirin             5   -3.420000 0.8642916
+#> 2   F   placebo            12   -2.058333 0.5247655
+
+# Rename column change.length to just N
+names(cdata)[names(cdata)=="change.length"] <- "N"
+
+######
+The aggregate function is more difficult to use, but it is included in the base R installation and does not require the installation of another package.
+# Get a count of number of subjects in each category (sex*condition)
+cdata <- aggregate(data["subject"], by=data[c("sex","condition")], FUN=length)
+cdata
+#>   sex condition subject
+#> 1   F   aspirin       5
+
+# Sort by sex first
+cdata <- cdata[order(cdata$sex),]
+
+# Get the average effect size by sex and condition for three columns
+cdata.means <- aggregate(data[c("before","after","change")], 
+                         by = data[c("sex","condition")], FUN=mean)
+cdata.means
+#>   sex condition   before     after    change
+#> 1   F   aspirin 11.06000  7.640000 -3.420000
+
+# Merge the data frames
+cdata <- merge(cdata, cdata.means)
+
+
+
+##### tidyverse - Missing Values (MCAR)
+source: https://datascienceplus.com/how-to-manage-missing-values-in-the-longitudinal-data-with-tidyverse/
+
+library(tidyverse)
+dat = data.frame(
+  id = c(1,1,1,1, 2,2,2,2, 3,3,3,3),
+  quarter = rep(c("Jan", "Apr", "Jul", "Oct"), times=3),
+  spending = c(22,35,10,64, 55,23,NA,10, 42,NA,NA,18)
+  )
+dat
+# Find the missings by group:
+dat %>%
+  group_by(id) %>% 
+  summarise(missing=sum(is.na(spending)))
+
+# To remove all the missing values will use the na.omit function.
+na.omit(dat)
+
+# Replace missing values with the average of the group
+
+dat %>% 
+  group_by(id) %>% 
+  mutate(spending_mean = ifelse(is.na(spending), mean(spending, na.rm=T), spending))
+
+#Filling the missings with other values within the group
+#This approach is useful when you need to replace the missing with the former or next #value within the group. Filling of missing with other values can be in two directions, up #and down. See the code below to distinguish between up and down.
+dat_fill_down = dat %>% 
+  group_by(id) %>% 
+  fill(spending, .direction = c("down"))
+dat_fill_up = dat %>% 
+  group_by(id) %>% 
+  fill(spending, .direction = c("up"))
+
+
+
+
+##### skimr package 
+#  skim_tee function --> that allows you to get `skim` summaries at intermediate points in a pipe chain 
+
+#### Desde TECLADO inline ####
+scan()
+nombres <- scan(,what=character(),3) 
+
+cat("TITLE extra line", "2 3 5 7", "11 13 17", file = "ex.data", sep = "\n")  ## graba archivo
+## lee archivo "ex.data"
+pp <- scan("ex.data", skip = 1, quiet = TRUE)   
+scan("ex.data", skip = 1)
+scan("ex.data", skip = 1, nlines = 1) # only 1 line after the skipped one
+scan("ex.data", what = list("","","")) # flush is F -> se lee el elemento 7 y da error
+scan("ex.data", what = list("","",""), flush = TRUE)  # Se desprecia el elemento que no coincide con estructura
+
+
+
+
+#### Desde PORTAPAPELES - Corta-Pega ####
+read.delim("clipboard")   ## Para WINDOWS
+read.table(file = "clipboard", sep = "t")
+writeClipboard(as.character(factor.name))      # copia datos desde R al portapapeles y con CTRL+V a Excel
+
+write.table(data,"clipboard",sep="\t",col.names=NA)  # idem copia datos desde R a EXCEL corta-pega (portapapeles)
+data2 <- read.table(pipe("pbpaste"), sep="\t", header=T)     ## Para MACOSX
+
+
+#### EXCEL ####
+library("readxl",lib.loc="/Library/Frameworks/R.framework/Versions/3.3/Resources/library")
+read_excel("filename.xlsx")
+
+## Leer desde formato csv
+read.csv2("DB.csv", na.strings = "NA", stringsAsFactors = FALSE)
+
+write.csv2(schemaIR, file="schemaIR.csv", na = "",  quote = FALSE, row.names = FALSE)
+## No tiene limite de columnas, como si pasa con formato xls (desde Java)
+## Para importar UTF-8 sin problemas, hay que abrir documento nuevo, Datos > Importar datos nuevos > Importar archivo de texto > ...
+# Seleccionar Delimitados y Origen del archivo (Unicode UTF-8)
+
+###############
+devtools::session_info()
+devtools::session_info(include_base = TRUE)
+
+#### Ejecutar EXPRESIONES ####
+rlang::parse_expr("head(letters)")
+
+
+#### Elegir Archivo ####
+file.choose()
+
+#### TEXTO  ####
+trimws()  # Limpiar texto de espacios
+strwrap(text,width,indent)  # crear parrafos
+
+#### REDONDEO ####
+floor(x) # Redondeo 'hacia abajo'
+ceiling(x) # Redondeo 'hacia arriba'
+round(x,1) # Redondeo 'a 1 decimal' (este es un parámetro de la función round que puedo cambiar!)
+trunc(x) # Parte entera
+signif(x,digits) 
+
+#### GRAFICOS ####
+geom_text(aes(X,Y,label = c(caption1,caption2)),
+	size = 3,
+	data=data.frame(country=c("Spain","Germany")))
+# en este caso pone caption1 en Spain y caption2 en Germany
+
+#### Guardar info desde R ####
+dput(list, file="out.txt")  # GRABAR en bruto  writes an ASCII representation of the list structure
+new <- source("out.txt")  # Recuperar en R
+
+library(jsonlite)   ## para preservar key:value info
+ toJSON(new)
+cat( toJSON(new), file="test.3.txt")
+
+dataDir <- "."
+saveRDS( operacions, file.path(dataDir, "files"))
+operacions2 <- readRDS(file.path(dataDir, "files"))
+
+#### SAVE ####
+save() vs. saveRDS()  
+saveRDS() doesn't save the both the object and its name it just saves a representation of the object. Cuando vuelves a cargar el objeto con readRDS() puedes darle el nombre que quieras. Ej: 
+  saveRDS(mod, "mymodel.rds")   # el objeto originalmente se llama 'mod'
+  mod2 <- readRDS("mymodel.rds")
+  
+save() graba MÚLTIPLES objetos con sus nombres de forma que cuando lo cargas de nuevo (con load), mantienen sus nombres originales.
+  save(mod, file = "mymodel.rda")
+  load(file = "mymodel.rda")
+
+
+### Grouping functions (tapply, by, aggregate) and the *apply family
+
+
+##### An anonymous function:
+(function(x, y){ z <- x^2 + y^2; x+y+z })(0:7, 1)
+
+
+##########################
+####### data.table
+# We can use with=FALSE to do the same operation as in data.frame (el problema está en la seleccion de columnas para un data.table
+ej:  ir40RR[idxi,question,with=FALSE]
+
+df <- setDF(dt) -> function to convert a data.table to data.frame by reference. 
+
+
+cols<-!(colnames(dt)=="V1" | colnames(dt)=="V2" | colnames(dt)=="V3" | colnames(dt)=="V5")
+new_dt<-subset(dt,,cols)
+
+cols = paste("V", c(1,2,3,5), sep="")
+dt[, !cols, with=FALSE]
+
+dt[, ..cols]
+
+dt[, .SD, .SDcols = cols]
+
+dt[, .SD, .SDcols = -cols]
+
+dt[, !c("V1","V2","V3","V5"), with=FALSE]
+# para evitar determinadas columnas
+
+
+require(dplyr)
+dt <- select(dt, -V1, -V2, -V3, -V4)v_3
+
+dt[, names(dt)[c(-1, -2, -3, -5)], with = FALSE]
+
+##### ver qué columnas son FACTOR
+ir40RRsubset[, lapply(.SD, is.factor)]
+## Para convertir determinadas columnas ...
+columnsToConvert <- c("x1", "x2")  # or .. <- setdiff(names(DT), "y") 
+DT <- cbind(DT[, lapply(.SD, factor), .SDcols=columnsToConvert], y=DT[, y])
+# une las columnas convertidas en Factor + y (que no lo eran)
+
+
+df %>% filter(!apply(., 1, function(row) any(row <= 8 )))
+## Utiliza el punto en lugar de la variable por haber utilizado %>%
+## Del DF elimina todos los registros con menos de 8 en alguna de sus columnas.
+
+### Convierte las variables que contienen "A" en el DF "X" en numéricas
+1) 
+.cols <- names(X) %like% "A"
+X[, (names(X)[.cols]) := lapply(.SD, as.numeric), .SDcols = .cols]
+
+2)
+X[, grep("A", names(X), value = TRUE) := lapply(.SD, as.numeric), .SDcols = grep("A", names(X), value = TRUE)]
+
+3)   ## Lo mismo que antes pero mas legible
+grep("A", names(X), value = TRUE) %>% { X[, (.) := lapply(.SD, as.numeric), .SDcols=.] }
+
+######################
+DT[, c("colA", "colB", ...) := list(valA, valB, ...)]
+# when you have only one column to assign to you can drop the quotes and list(), for convenience
+DT[, colA := valA]
+
+## mismo
+DT[, `:=`(colA = valA, # valA is assigned to colA
+	  colB = valB, # valB is assigned to colB
+	  )]
+
+# source: https://rawgit.com/wiki/Rdatatable/data.table/vignettes/datatable-reference-semantics.html
+##  How can we add columns speed and total delay of each flight to flights data.table?
+flights[, `:=`(speed = distance / (air_time/60), # speed in mph (mi/h)
+	       delay = arr_delay + dep_delay)]   # delay in minutes
+
+## Replace those rows where hour == 24 with the value 0   # subassign by reference
+flights[hour == 24L, hour := 0L]
+
+## Remove delay column
+flights[, c("delay") := NULL]
+flights[, delay := NULL]
+
+## How can we add a new column which contains for each orig,dest pair the maximum speed?
+flights[, max_speed := max(speed), by = .(origin, dest)]    # .(origin,dest)  es lo mismo que c("origin", "dest")
+
+## How can we add two more columns computing max() of dep_delay and arr_delay for each month, using .SD?
+in_cols  = c("dep_delay", "arr_delay")
+out_cols = c("max_dep_delay", "max_arr_delay")
+flights[, c(out_cols) := lapply(.SD, max), by = month, .SDcols = in_cols]
+
+### registra max valor de una variable por grupos
+ir40RRsubset[, .(max_v = max(v_0f854)), by = v_3]
+
+################
+## Calcula el numero de registros en las variables indicadas, por grupo 
+setDT(ir40RRsubset[,1:6])[,nrow(.SD),by=.(v_3)]
+
+######
+nrow(iris_miss[complete.cases(iris_miss), ])  # Count number of complete rows
+
+
+
+
+##########
+You can use :  invisible(CalculateSth())  #  if you don't want the return value to be printed.
+
+##########
+system.time(dt <- read.csv("data.csv"))
+#  user  system elapsed 
+# 11.46  0.21   11.69
+
+system.time(dt <- fread("data.csv"))
+# user system elapsed 
+# 0.66  0.00   0.66
+
+# FIND FILES *.pdf
+list.files(pattern = "\\.(PDF|pdf)$")
+
+##########
+# calcula var nueva con 'mutate'
+# segmenta el DF y obtiene calculos agregados con 'summarize'
+
+gdp_pop_bycontinents_byyear_above25 <- gapminder %>%
+    mutate(gdp_billion = ifelse(lifeExp > 25, gdpPercap * pop / 10^9, NA)) %>%
+    group_by(continent, year) %>%
+    summarize(mean_gdpPercap = mean(gdpPercap),
+              sd_gdpPercap = sd(gdpPercap),
+              mean_pop = mean(pop),
+              sd_pop = sd(pop),
+              mean_gdp_billion = mean(gdp_billion),
+              sd_gdp_billion = sd(gdp_billion))
+
+##########
+# purrr::map
+files <- list.files(path="./data/i4survey",pattern = "xlsx") 
+aacc <- purrr::map_df(files, function(x) {
+  xlsx_file <- file.choose()
+  Rest_es2 <- read_excel(xlsx_file, sheet = excel_sheets(xlsx_file)[1], col_names = FALSE)
+  return(zzas<-data.frame(excelFilename=x,values=paste(es2[sapply( es3, `[[`, 1)-1], collapse = ",")))
+})
+
+purrr::map_dbl( 1:7, ~.x-1 )		# Resta 1 a si mismo      [1] 0 1 2 3 4 5 6
+
+sapply( es3, `[[`, 1)   # toma el primer campo de cada fila de es3
+
+##########
+# LEFT_JOIN
+ir40EnvCaptura <- left_join(ir40EnvCaptura[-6], aacc,by="excelFilename") ### Incrustar SCALES generadas, en vvarNF
+
+##########
+# readline || switch || menu
+# 		CALCULADORA
+# Program make a simple calculator that can add, subtract, multiply and divide using functions
+add <- function(x, y) { return(x + y) }
+subtract <- function(x, y) { return(x - y) }
+multiply <- function(x, y) { return(x * y) }
+divide <- function(x, y) { return(x / y) }
+# take input from the user
+print("Select operation.")
+print("1.Add")
+print("2.Subtract")
+print("3.Multiply")
+print("4.Divide")
+choice = as.integer(readline(prompt="Enter choice[1/2/3/4]: "))
+num1 = as.integer(readline(prompt="Enter first number: "))
+num2 = as.integer(readline(prompt="Enter second number: "))
+operator <- switch(choice,"+","-","*","/")
+result <- switch(choice, add(num1, num2), subtract(num1, num2), multiply(num1, num2), divide(num1, num2))
+print(paste(num1, operator, num2, "=", result))
+
+########
+# Funciones para obtener respuesta de usuario
+
+menu (c ("Si", "No"), title="¿Actualizar caché de tablas?")
+select.list(sort(.packages(all.available = TRUE)))
+readline()   # lets the user enter a one-line string at the terminal. 
+
+interactive()
+
+switch(menu(c("List letters", "List LETTERS")) + 1, cat("Nothing done\n"), letters, LETTERS)
+
+
+system("comando")    # para ejecutar instrucciones en el sistema
+
+
+#### Desde linea de comandos del sistema (BASH)
+Rscript a.R    # para ejecutar script desde linea de comandos
+
+# Otra opción es:
+R CMD BATCH a.R
+# Check the output    pq envia la salida a un archivo .Rout
+cat a.Rout
+
+# Otra opción
+R < scriptName.R --no-save  
+
+# Otra opción para instalar paquetes
+R -e 'install.packages(c("package1", "package2"))' # install to default location. 
+Sudo R -e 'install.packages(c("package1", "package2"), lib="/usr/local/lib/R/site-library")' # install to location that requires root. 
+
+
+### Portapapeles 
+clipr::write_clip()
+data <- read.table(pipe("pbpaste"), sep="\t", header=T)
+write.table(x,file = pipe("pbcopy"),sep="\t",col.names = T,row.names = F,quote = F,...)  # macosx
+write.table(cb, "clipboard", sep="\t", row.names = FALSE)   # Windows
+
+##### SHINY #####
+library(shiny)
+runExample("01_hello")
+
+
+
+
+############################
+# list all packages where an update is available
+old.packages()
+
+# update all available packages
+update.packages()
+
+# update, without prompts for permission/clarification
+update.packages(ask = FALSE)
+
+# update only a specific package use install.packages()
+install.packages("plotly")
+
+
+
+
+
+
+########## sustituye sapply, apply ... etc #####
+purrr::map(1:10, ~ .x + 4)
+# ~ sustituye a :  function (notese el punto en la x)
+
+#### Source: https://purrr.tidyverse.org/ ####
+library(purrr)
+mtcars %>%
+  split(.$cyl) %>% # from base R   divide el DF en una lista con 5 DFs agrupando las observaciones por tipo de cyl
+  map(~ lm(mpg ~ wt, data = .)) %>%
+  map(summary) %>%
+  map_dbl("r.squared")
+
+
+############ Advanced R ####
+Bind symbols to objects in an environment
+https://rlang.r-lib.org/reference/env_bind.html
+
+
