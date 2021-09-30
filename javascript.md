@@ -13,9 +13,16 @@ elements.toString(); -> "1,2,3"
 const p = "El Sevilla F.C. es el mejor equipo de la ciudad";  
 p.replace("Sevilla F.C.","Real Betis Balompié");  
   
+## trim  
+Remove whitespace from both sides of a string  
+let str = "       Hello World!        ";  
+str.trim()   // Returns "Hello World!"  
+  
+
 # Extensiones (Addons) de Chrome  
 ## SelectorGadget  
 https://selectorgadget.com/  
+https://github.com/cantino/selectorgadget  
 https://chrome.google.com/webstore/detail/selectorgadget/mhjhnkcfbdhnjickkkdbjoemdmbfginb  
 SelectorGadget is an open source tool that makes CSS selector generation and discovery on complicated sites a breeze ... Click on a page element that you would like your selector to match (it will turn green). SelectorGadget will then generate a minimal CSS selector for that element, and will highlight (yellow) everything that is matched by the selector. Now click on a highlighted element to remove it from the selector (red), or click on an unhighlighted element to add it to the selector.  
 
