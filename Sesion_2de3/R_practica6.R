@@ -1,8 +1,6 @@
 ########
 # URL : https://www.sepe.es/contenidos/que_es_el_sepe/estadisticas/datos_estadisticos/empleo/datos/estadisticas_nuevas.html
-# 
 # https://www.sepe.es/contenidos/que_es_el_sepe/estadisticas/datos_estadisticos/empleo/datos/2018/enero.html
-# 
 # https://www.sepe.es/contenidos/que_es_el_sepe/estadisticas/datos_estadisticos/empleo/datos/2018/enero_2018/ESTADISTICA_DE_EMPLEO.xls
 # 
 
