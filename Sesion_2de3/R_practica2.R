@@ -1,3 +1,13 @@
+# Este script tiene como autor a :
+# Pedro Luis Luque Calvo
+# Profesor(TU) del Departamento de Estadística e Investigación Operativa
+# https://github.com/calote
+
+# Es necesario instalar el software Xpdf tools [http://www.xpdfreader.com/download.html]
+# Para una explicación detallada :
+# http://destio.us.es/calvo/post/extraer-imagenes-y-texto-de-un-fichero-pdf-con-r/
+
+
 # Carga las librerías R necesarias y si no están instaladas las instala
 if (!require(stringr)) {
   install.packages("stringr")
