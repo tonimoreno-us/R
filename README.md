@@ -22,6 +22,12 @@ https://cran.r-project.org/bin/windows/base/R-4.1.1-win.exe
 Download R 4.1.1 (for Windows 32/64 bit)  
 86 MB  
 
+### Otro links de R
+https://cran.rstudio.com/web/packages/index.html  
+https://cran.rstudio.com/web/views/  
+https://www.r-project.org/  
+  
+
 https://notepad-plus-plus.org/downloads/v8.1.5/  
   
   
