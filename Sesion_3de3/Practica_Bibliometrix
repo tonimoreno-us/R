@@ -3,7 +3,8 @@
 ## Descriptive analysis provides some snapshots about the annual research development, the top “k” productive authors, papers, countries and most relevant keywords.
 ##
 ## http://bibliometrix.org/documents/bibliometrix_Report.html#data-loading-and-converting
-
+## https://github.com/massimoaria/bibliometrix
+## http://www.bibliometrix.org/biblioshiny
 
 
 # install.packages("bibliometrix")
@@ -22,10 +23,14 @@ library(dplyr)
 
 
 # Loading txt or bib files into R environment
-D <- readFiles(file.choose())
-
 # Converting the loaded files into a R bibliographic dataframe
-M <- convert2df(D, dbsource="isi",format="bibtex")
+# Elegir archivos EXPORTADOS de WoS : Plain Text -> Full Content
+#
+Ms <- convert2df(file.choose(), dbsource="isi",format="bibtex")
+
+M <- dplyr::full_join(M,Ms)
+rm(Ms)
+
 
 ## Si tienes varios archivos, se cargan con distintos nombres (M1, M2,...) repitiendo las instrucciones anteriores
 ## y puedes unirlos mediante la siguiente instrucción
