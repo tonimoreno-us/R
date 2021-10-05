@@ -1,0 +1,82 @@
+## Bibliometrix is an open-source software for automating the stages of data-analysis and data-visualization. 
+## After converting and uploading bibliographic data in R, Bibliometrix performs a descriptive analysis and different research-structure analysis.
+## Descriptive analysis provides some snapshots about the annual research development, the top “k” productive authors, papers, countries and most relevant keywords.
+##
+## http://bibliometrix.org/documents/bibliometrix_Report.html#data-loading-and-converting
+
+
+
+# install.packages("bibliometrix")
+
+# Most updated version from GitHub
+# install.packages("devtools")
+# devtools::install_github("massimoaria/bibliometrix")
+
+library(bibliometrix)
+library(dplyr)
+
+## http:\\www.bibliometrix.org       
+## To start with the shiny web-interface, please digit:
+## biblioshiny()
+
+
+
+# Loading txt or bib files into R environment
+D <- readFiles(file.choose())
+
+# Converting the loaded files into a R bibliographic dataframe
+M <- convert2df(D, dbsource="isi",format="bibtex")
+
+## Si tienes varios archivos, se cargan con distintos nombres (M1, M2,...) repitiendo las instrucciones anteriores
+## y puedes unirlos mediante la siguiente instrucción
+##   M <- full_join(M1,M2)
+
+
+
+## Descriptive Analysis
+## Main findings about the collection
+results <- biblioAnalysis(M)
+summary(results, k=10, pause=F, width=130)
+
+plot(x=results, k=10, pause=F)
+
+## Most Cited References
+CR <- citations(M, field = "article", sep = ";")
+cbind(CR$Cited[1:20])
+
+## Historiograph - Direct citation linkages
+histResults <- histNetwork(M, min.citations=quantile(M$TC,0.75), sep = ";")
+options(width = 130)
+net <- histPlot(histResults, n=20, size.cex=TRUE, size = 5, labelsize = 3, arrowsize = 0.5)
+
+## The conceptual structure - Co-Word Analysis
+## Co-word Analysis through Keyword co-occurrences
+NetMatrix <- biblioNetwork(M, analysis = "co-occurrences", network = "keywords", sep = ";")
+
+net=networkPlot(NetMatrix, 
+  normalize="association", 
+  n = 50, 
+  Title = "Keyword Co-occurrences", 
+  type = "fruchterman", 
+  size.cex=TRUE, 
+  size=20, 
+  remove.multiple=F, 
+  edgesize = 10, 
+  labelsize=3,
+  label.cex=TRUE,
+  label.n=30,
+  edges.min=2)
+
+
+keywords <- data.frame(results$DE)   ## str(results$DE)
+write.csv2(keywords,file=paste0(file.choose(),"keywords.txt"))
+
+
+##################################
+library(wordcloud)
+library(tm)
+
+wordcloud (words = keywords$Tab, freq = keywords$Freq) 
+#           , scale=c(5,0.5), max.words=1, random.order=FALSE, rot.per=0.35, use.r.layout=FALSE, colors=brewer.pal(8, "Dark2"))
+# words=attr(results$DE,"names")
+
