@@ -25,6 +25,7 @@ Download R 4.1.1 (for Windows 32/64 bit)
 ### Otro links de R
 https://cran.rstudio.com/web/packages/index.html  
 https://cran.rstudio.com/web/views/  
+https://cran.rstudio.com/web/views/WebTechnologies.html  
 https://www.r-project.org/  
   
 
