@@ -1,0 +1,87 @@
+#### Script que proporciona lista de ISSN procedente de WoS para estudio en BIBLIOMETRIX
+library(RSelenium)     
+rD <- rsDriver(browser = "chrome")    # start a chrome browser
+## rD <- rsDriver(browser=c("chrome"), chromever="78.0.3904.70")
+## /Users/tonimoreno/Library/Application Support/binman_chromedriver/mac64/
+
+remDr <- rD[["client"]]
+
+journalsV <- c("Academy of Management Annals", 
+"ACADEMY OF MANAGEMENT REVIEW", 
+"JOURNAL OF MANAGEMENT", 
+"IEEE Transactions on Industrial Informatics", 
+"ACADEMY OF MANAGEMENT JOURNAL", 
+"Journal of Supply Chain Management", 
+"Business Strategy and the Environment", 
+"HARVARD BUSINESS REVIEW", 
+"STRATEGIC MANAGEMENT JOURNAL", 
+"TECHNOVATION", 
+"CALIFORNIA MANAGEMENT REVIEW", 
+"INTERNATIONAL JOURNAL OF PRODUCTION ECONOMICS", 
+"MANAGEMENT SCIENCE", 
+"Internet Research", 
+"JOURNAL OF TECHNOLOGY TRANSFER", 
+"JOURNAL OF BUSINESS RESEARCH", 
+"JOURNAL OF STRATEGIC INFORMATION SYSTEMS", 
+"Academy of Management Perspectives", 
+"TECHNOLOGICAL FORECASTING AND SOCIAL CHANGE", 
+"JOURNAL OF PRODUCT INNOVATION MANAGEMENT", 
+"INDUSTRIAL MANAGEMENT & DATA SYSTEMS", 
+"International Small Business Journal-Researching Entrepreneurship", 
+"JOURNAL OF MANUFACTURING SYSTEMS", 
+"JOURNAL OF INTELLIGENT MANUFACTURING", 
+"COMPUTERS & INDUSTRIAL ENGINEERING")
+
+journalsQ2 <- c("International Business Review", "Journal of Manufacturing Processes", "PRODUCTION PLANNING & CONTROL", "JOURNAL OF MANAGEMENT IN ENGINEERING", "INTERNATIONAL JOURNAL OF PRODUCTION RESEARCH", "Industry and Innovation", "JOURNAL OF INFORMATION TECHNOLOGY", "JOURNAL OF MANAGEMENT INFORMATION SYSTEMS", "Strategic Entrepreneurship Journal", "Asia Pacific Journal of Management", "Journal of Manufacturing Technology Management", "INTERNATIONAL JOURNAL OF ADVANCED MANUFACTURING TECHNOLOGY", "JOURNAL OF ENGINEERING AND TECHNOLOGY MANAGEMENT")
+
+journalsQ3 <- c("International Journal of Logistics Management", "PRODUCTION AND OPERATIONS MANAGEMENT", "Journal of Enterprise Information Management", "Advances in Production Engineering & Management", "IEEE TRANSACTIONS ON ENGINEERING MANAGEMENT", "INDUSTRIAL AND CORPORATE CHANGE", "TECHNOLOGY ANALYSIS & STRATEGIC MANAGEMENT", "RESEARCH-TECHNOLOGY MANAGEMENT", "Information Technology & Management", "INTERNATIONAL JOURNAL OF TECHNOLOGY MANAGEMENT", "REVIEW OF INDUSTRIAL ORGANIZATION")
+
+#### Esta variable debe cambiarse para utilizar journalsQ2 y ..Q3 cuando sea necesario
+journals <- journalsV
+
+remDr$navigate("http://mjl.clarivate.com/")
+i <- 0
+it <- length(journals)
+journals_issn <- NULL
+
+for (jrn in journals) {
+	i <- i + 1  
+	webElem <- remDr$findElement(using = "xpath", "//*[@id='search-box']")
+	webElem$clearElement()
+	webElem$sendKeysToElement(list(jrn, key = 'enter'))
+
+	readline(prompt=paste0(i,"[",it,"] Comprueba que el navegador ha cargado la página ... "))
+
+	issnWE <- remDr$findElements(using = "xpath", "//div[@class='search-results-title']")
+
+	issnDF <- unlist(sapply(issnWE, function(x) x$getElementText()))
+	issnPS <- grep("ISSN / eISSN:",issnDF, fixed = TRUE)[1]
+
+	issnTXT <- unlist(remDr$findElements(using = "xpath", "//div[@class='search-results-value']")[[issnPS]]$getElementText())
+	issnTXT9 <- substr(issnTXT,1,9)
+	journals_issn <- rbind(journals_issn, issnTXT9)
+
+}
+
+write.csv2(journals_issn,file=paste0(file.choose(),"journals_issn.csv"))
+
+strISSN <- NULL
+for(jrn in journals_issn) {
+  strISSN <- paste(jrn,"OR",strISSN)
+}
+
+strISSN
+
+
+
+remDr$close()
+# stop the selenium server
+rD[["server"]]$stop()
+# if user forgets to stop server it will be garbage collected.
+rD <- rsDriver()
+rm(rD)
+gc(rD)
+
+
+save(list=ls(),file="WoS_pruebas.rda")
+rm("rD","remDr","webElem")    # Elimina lo relacionado con Selenium
