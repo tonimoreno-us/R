@@ -183,6 +183,17 @@ write.csv2(schemaIR, file="schemaIR.csv", na = "",  quote = FALSE, row.names = F
 devtools::session_info()
 devtools::session_info(include_base = TRUE)
 
+### Windows: Install Rtools  -  Mac: Install Xcode from the Mac App Store ###
+install.packages("devtools")
+devtools::install_github("hadley/devtools")
+
+dataframe1 <- data.frame(installed.packages())
+
+### Comprueba si existe el paquete ZOO, y si no está, lo instala
+if(!require(zoo)) install.packages("zoo",repos = "https://cloud.r-project.org")
+library(zoo)
+  
+
 #### Ejecutar EXPRESIONES ####
 rlang::parse_expr("head(letters)")
 
@@ -479,3 +490,19 @@ Bind symbols to objects in an environment
 https://rlang.r-lib.org/reference/env_bind.html
 
 
+
+######
+twint (python) twitter
+https://github.com/twintproject/twint
+https://www.markhneedham.com/blog/2019/05/29/loading-tweets-twint-kafka-neo4j/
+
+###### 
+R consortium
+https://www.youtube.com/channel/UC_R5smHVXRYGhZYDJsnXTwg
+
+xaringan
+Professional, Polished, Presentable: Making Great Slides with xaringan
+https://www.youtube.com/watch?v=RPFh3y9UAX4&list=PL4IzsxWztPdnCC_kMCYKrd_t6cViMhBrD
+
+Xaringan Slides (part 1)
+https://www.youtube.com/watch?v=M3skTMQbCD0
